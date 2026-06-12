@@ -21,9 +21,9 @@ python manage.py createsuperuser
 python manage.py runserver
 ```
 
-Open http://127.0.0.1:8000 for the store, http://127.0.0.1:8000/dashboard/ for the staff dashboard (staff login required), and http://127.0.0.1:8000/admin/ for the Django admin.
+and sign in
 
-D
+.....
 
 ## Features
 
