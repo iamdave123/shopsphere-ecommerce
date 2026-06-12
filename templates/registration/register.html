@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}Create account{% endblock %}
+{% block content %}
+<div class="container py-5 d-flex justify-content-center">
+  <div class="auth-card p-4 p-md-5 w-100">
+    <h1 class="section-title fs-3 mb-1">Create your account</h1>
+    <p class="text-muted mb-4">One account for orders, tracking and faster checkout.</p>
+    <form method="post" novalidate>
+      {% csrf_token %}
+      {% for field in form %}
+        <div class="mb-3">
+          <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+          <input type="{{ field.field.widget.input_type }}" name="{{ field.html_name }}" id="{{ field.id_for_label }}"
+                 class="form-control {% if field.errors %}is-invalid{% endif %}" value="{{ field.value|default:'' }}" required>
+          {% for e in field.errors %}<div class="invalid-feedback">{{ e }}</div>{% endfor %}
+          {% if field.help_text %}<div class="form-text">{{ field.help_text|safe }}</div>{% endif %}
+        </div>
+      {% endfor %}
+      <button class="btn btn-accent w-100">Create account</button>
+    </form>
+    <p class="text-center mt-4 mb-0 text-muted">Already a member? <a href="{% url 'login' %}">Sign in</a></p>
+  </div>
+</div>
+{% endblock %}

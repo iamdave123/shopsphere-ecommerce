@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container py-4">
+  <div class="row g-4">
+    <div class="col-lg-3 col-xl-2">
+      <div class="dash-sidebar p-3">
+        <div class="text-white fw-bold mb-3 px-2"><i class="bi bi-speedometer2 me-2"></i>Manage store</div>
+        <nav class="nav flex-column gap-1">
+          {% url 'dashboard:overview' as u %}<a class="nav-link {% if request.path == u %}active{% endif %}" href="{{ u }}"><i class="bi bi-grid me-2"></i>Overview</a>
+          {% url 'dashboard:products' as u %}<a class="nav-link {% if 'products' in request.path %}active{% endif %}" href="{{ u }}"><i class="bi bi-box-seam me-2"></i>Products</a>
+          {% url 'dashboard:categories' as u %}<a class="nav-link {% if 'categories' in request.path %}active{% endif %}" href="{{ u }}"><i class="bi bi-tags me-2"></i>Categories</a>
+          {% url 'dashboard:inventory' as u %}<a class="nav-link {% if 'inventory' in request.path %}active{% endif %}" href="{{ u }}"><i class="bi bi-clipboard-data me-2"></i>Inventory</a>
+          {% url 'dashboard:orders' as u %}<a class="nav-link {% if request.path == u %}active{% endif %}" href="{{ u }}"><i class="bi bi-receipt me-2"></i>Orders</a>
+          {% url 'dashboard:customers' as u %}<a class="nav-link {% if 'customers' in request.path %}active{% endif %}" href="{{ u }}"><i class="bi bi-people me-2"></i>Customers</a>
+        </nav>
+        <hr class="border-light opacity-25">
+        <a class="nav-link" href="/admin/" target="_blank"><i class="bi bi-gear me-2"></i>Django admin</a>
+      </div>
+    </div>
+    <div class="col-lg-9 col-xl-10">{% block dash %}{% endblock %}</div>
+  </div>
+</div>
+{% endblock %}

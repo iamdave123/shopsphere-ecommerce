@@ -1,0 +1,28 @@
+{% extends "dashboard/base_dash.html" %}
+{% block title %}Inventory{% endblock %}
+{% block dash %}
+<h1 class="section-title fs-3 mb-1">Inventory</h1>
+<p class="text-muted mb-4">Sorted by stock level — items at the top need attention first.</p>
+<div class="stat-card p-3">
+  <div class="table-responsive">
+    <table class="table align-middle">
+      <thead><tr><th>Product</th><th>Category</th><th>Stock</th><th>Status</th><th class="text-end"></th></tr></thead>
+      <tbody>
+        {% for p in products %}
+          <tr class="{% if p.stock == 0 %}table-danger{% elif p.low_stock %}table-warning{% endif %}">
+            <td class="fw-semibold">{{ p.name }}</td>
+            <td>{{ p.category.name }}</td>
+            <td>{{ p.stock }}</td>
+            <td>
+              {% if p.stock == 0 %}<span class="badge text-bg-danger">Out of stock</span>
+              {% elif p.low_stock %}<span class="badge text-bg-warning">Low stock</span>
+              {% else %}<span class="badge text-bg-success">Healthy</span>{% endif %}
+            </td>
+            <td class="text-end"><a href="{% url 'dashboard:product_edit' p.pk %}" class="btn btn-sm btn-outline-teal">Restock</a></td>
+          </tr>
+        {% empty %}<tr><td colspan="5" class="text-muted">No products yet.</td></tr>{% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

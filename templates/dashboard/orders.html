@@ -1,0 +1,51 @@
+{% extends "dashboard/base_dash.html" %}
+{% load humanize %}
+{% block title %}Orders{% endblock %}
+{% block dash %}
+<div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
+  <h1 class="section-title fs-3 mb-0">Orders</h1>
+  <form method="get">
+    <select name="status" class="form-select form-select-sm" onchange="this.form.submit()">
+      <option value="">All statuses</option>
+      {% for value, label in statuses %}<option value="{{ value }}" {% if status == value %}selected{% endif %}>{{ label }}</option>{% endfor %}
+    </select>
+  </form>
+</div>
+
+<div class="stat-card p-3">
+  <div class="table-responsive">
+    <table class="table align-middle">
+      <thead><tr><th>#</th><th>Customer</th><th>Items</th><th>Total</th><th>Placed</th><th style="min-width:190px">Status</th><th></th></tr></thead>
+      <tbody>
+        {% for order in page %}
+          <tr>
+            <td class="fw-semibold">{{ order.pk }}</td>
+            <td>{{ order.full_name }}<div class="small text-muted">{{ order.email }}</div></td>
+            <td>{{ order.item_count }}</td>
+            <td>${{ order.total|intcomma }}</td>
+            <td class="text-muted">{{ order.created|date:"M j, Y" }}</td>
+            <td>
+              <form method="post" action="{% url 'dashboard:order_status' order.pk %}" class="d-flex gap-1">
+                {% csrf_token %}
+                <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                <select name="status" class="form-select form-select-sm">
+                  {% for value, label in statuses %}<option value="{{ value }}" {% if order.status == value %}selected{% endif %}>{{ label }}</option>{% endfor %}
+                </select>
+                <button class="btn btn-sm btn-teal" title="Update status"><i class="bi bi-check-lg"></i></button>
+              </form>
+            </td>
+            <td><a href="{% url 'store:order_detail' order.pk %}" class="btn btn-sm btn-outline-teal"><i class="bi bi-eye"></i></a></td>
+          </tr>
+        {% empty %}<tr><td colspan="7" class="text-muted">No orders found.</td></tr>{% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% if page.has_other_pages %}
+    <nav><ul class="pagination pagination-sm justify-content-center mb-0">
+      {% for n in page.paginator.page_range %}
+        <li class="page-item {% if n == page.number %}active{% endif %}"><a class="page-link" href="?page={{ n }}&status={{ status }}">{{ n }}</a></li>
+      {% endfor %}
+    </ul></nav>
+  {% endif %}
+</div>
+{% endblock %}

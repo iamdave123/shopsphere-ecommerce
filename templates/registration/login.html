@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Sign in{% endblock %}
+{% block content %}
+<div class="container py-5 d-flex justify-content-center">
+  <div class="auth-card p-4 p-md-5 w-100">
+    <h1 class="section-title fs-3 mb-1">Welcome back</h1>
+    <p class="text-muted mb-4">Sign in to checkout faster and track your orders.</p>
+    {% if form.errors %}<div class="alert alert-danger">Your username and password didn't match. Please try again.</div>{% endif %}
+    <form method="post">
+      {% csrf_token %}
+      <div class="mb-3">
+        <label class="form-label" for="id_username">Username</label>
+        <input type="text" name="username" id="id_username" class="form-control" autofocus required>
+      </div>
+      <div class="mb-3">
+        <label class="form-label" for="id_password">Password</label>
+        <input type="password" name="password" id="id_password" class="form-control" required>
+      </div>
+      <input type="hidden" name="next" value="{{ next }}">
+      <button class="btn btn-teal w-100">Sign in</button>
+    </form>
+    <p class="text-center mt-4 mb-0 text-muted">New here? <a href="{% url 'store:register' %}">Create an account</a></p>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,40 @@
+{% extends "dashboard/base_dash.html" %}
+{% block title %}Categories{% endblock %}
+{% block dash %}
+<h1 class="section-title fs-3 mb-4">Categories</h1>
+<div class="row g-4">
+  <div class="col-lg-7">
+    <div class="stat-card p-3">
+      <table class="table align-middle mb-0">
+        <thead><tr><th>Category</th><th>Products</th><th class="text-end"></th></tr></thead>
+        <tbody>
+          {% for c in categories %}
+            <tr>
+              <td>{% if c.icon %}<i class="bi bi-{{ c.icon }} me-2 text-muted"></i>{% endif %}<strong>{{ c.name }}</strong>
+                {% if c.description %}<div class="small text-muted">{{ c.description }}</div>{% endif %}</td>
+              <td>{{ c.product_count }}</td>
+              <td class="text-end">
+                <form method="post" action="{% url 'dashboard:category_delete' c.pk %}" onsubmit="return confirm('Delete “{{ c.name }}” and its {{ c.product_count }} product(s)?');">
+                  {% csrf_token %}<button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+                </form>
+              </td>
+            </tr>
+          {% empty %}<tr><td colspan="3" class="text-muted">No categories yet.</td></tr>{% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="col-lg-5">
+    <div class="stat-card p-4">
+      <h5 class="mb-3">Add a category</h5>
+      <form method="post">
+        {% csrf_token %}
+        <div class="mb-3"><label class="form-label">Name</label>{{ form.name }}{% for e in form.name.errors %}<div class="text-danger small">{{ e }}</div>{% endfor %}</div>
+        <div class="mb-3"><label class="form-label">Description</label>{{ form.description }}</div>
+        <div class="mb-3"><label class="form-label">Icon</label>{{ form.icon }}<div class="form-text">A <a href="https://icons.getbootstrap.com/" target="_blank" rel="noopener">Bootstrap icon</a> name, e.g. <code>laptop</code>.</div></div>
+        <button class="btn btn-accent">Add category</button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

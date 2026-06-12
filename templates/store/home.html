@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+{% block title %}Home{% endblock %}
+{% block content %}
+
+<section class="hero">
+  <div class="container py-5">
+    <div class="row align-items-center py-lg-4">
+      <div class="col-lg-7">
+        <div class="eyebrow mb-2">Mid-season picks are in</div>
+        <h1>Everything you need,<br>nothing you don't.</h1>
+        <p class="lead mt-3">Browse curated electronics, home goods, apparel and more — with honest prices, fast shipping and a 30-day return promise.</p>
+        <div class="d-flex gap-2 mt-4">
+          <a href="{% url 'store:product_list' %}" class="btn btn-accent btn-lg">Shop the collection</a>
+          <a href="#deals" class="btn btn-outline-light btn-lg">Today's deals</a>
+        </div>
+      </div>
+      <div class="col-lg-5 d-none d-lg-block">
+        <div class="hero-card p-4 mt-4 mt-lg-0">
+          <div class="d-flex align-items-center gap-3 mb-3">
+            <i class="bi bi-lightning-charge-fill fs-3" style="color:var(--saffron)"></i>
+            <div><strong>Flash picks</strong><br><span class="text-light-50 small">Refreshed daily</span></div>
+          </div>
+          {% for p in deals|slice:":3" %}
+            <a href="{{ p.get_absolute_url }}" class="d-flex justify-content-between text-decoration-none text-white py-2 border-top border-light border-opacity-10">
+              <span class="text-truncate me-3">{{ p.name }}</span>
+              <span><strong>${{ p.price }}</strong> <s class="text-light-50 small">${{ p.compare_at_price }}</s></span>
+            </a>
+          {% empty %}
+            <p class="text-light-50 mb-0">New deals drop soon — check back!</p>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="trust-bar py-3">
+  <div class="container">
+    <div class="row text-center g-3">
+      <div class="col-6 col-md-3"><i class="bi bi-truck me-2"></i><strong>Free shipping</strong> <span class="text-muted d-none d-md-inline">over $50</span></div>
+      <div class="col-6 col-md-3"><i class="bi bi-arrow-repeat me-2"></i><strong>30-day returns</strong></div>
+      <div class="col-6 col-md-3"><i class="bi bi-shield-check me-2"></i><strong>Secure checkout</strong></div>
+      <div class="col-6 col-md-3"><i class="bi bi-headset me-2"></i><strong>7-day support</strong></div>
+    </div>
+  </div>
+</section>
+
+<section class="container py-5">
+  <div class="section-eyebrow">Browse by</div>
+  <h2 class="section-title mb-4">Categories</h2>
+  <div class="row g-3">
+    {% for c in categories %}
+      <div class="col-6 col-md-4 col-lg-2">
+        <a class="category-tile text-center" href="{{ c.get_absolute_url }}">
+          <i class="bi bi-{{ c.icon|default:'box-seam' }} d-block mb-2"></i>
+          <strong>{{ c.name }}</strong>
+          <div class="small text-muted">{{ c.products.count }} item{{ c.products.count|pluralize }}</div>
+        </a>
+      </div>
+    {% endfor %}
+  </div>
+</section>
+
+{% if featured %}
+<section class="container pb-5">
+  <div class="section-eyebrow">Hand-picked</div>
+  <h2 class="section-title mb-4">Featured products</h2>
+  <div class="row g-4">
+    {% for product in featured %}
+      <div class="col-6 col-md-4 col-lg-3">{% include "store/_product_card.html" %}</div>
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
+
+{% if deals %}
+<section class="container pb-5" id="deals">
+  <div class="section-eyebrow">Limited time</div>
+  <h2 class="section-title mb-4">Today's deals</h2>
+  <div class="row g-4">
+    {% for product in deals %}
+      <div class="col-6 col-md-4 col-lg-3">{% include "store/_product_card.html" %}</div>
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
+
+<section class="container pb-5">
+  <div class="d-flex justify-content-between align-items-end mb-4">
+    <div>
+      <div class="section-eyebrow">Just in</div>
+      <h2 class="section-title mb-0">New arrivals</h2>
+    </div>
+    <a href="{% url 'store:product_list' %}" class="btn btn-outline-teal btn-sm">View all <i class="bi bi-arrow-right"></i></a>
+  </div>
+  <div class="row g-4">
+    {% for product in new_arrivals %}
+      <div class="col-6 col-md-4 col-lg-3">{% include "store/_product_card.html" %}</div>
+    {% empty %}
+      <p class="text-muted">No products yet — add some from the dashboard.</p>
+    {% endfor %}
+  </div>
+</section>
+
+{% endblock %}

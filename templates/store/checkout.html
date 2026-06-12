@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% load humanize %}
+{% block title %}Checkout{% endblock %}
+{% block content %}
+<div class="container py-5">
+  <h1 class="section-title mb-4">Checkout</h1>
+  <div class="row g-4">
+    <div class="col-lg-7">
+      <form method="post" novalidate>
+        {% csrf_token %}
+        {% if form.non_field_errors %}<div class="alert alert-danger">{{ form.non_field_errors }}</div>{% endif %}
+        <div class="stat-card p-4 mb-4">
+          <h5 class="mb-3"><i class="bi bi-geo-alt me-2"></i>Shipping details</h5>
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label">Full name</label>{{ form.full_name }}
+              {% for e in form.full_name.errors %}<div class="text-danger small">{{ e }}</div>{% endfor %}
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Email</label>{{ form.email }}
+              {% for e in form.email.errors %}<div class="text-danger small">{{ e }}</div>{% endfor %}
+            </div>
+            <div class="col-md-6"><label class="form-label">Phone (optional)</label>{{ form.phone }}</div>
+            <div class="col-md-6">
+              <label class="form-label">Address</label>{{ form.address }}
+              {% for e in form.address.errors %}<div class="text-danger small">{{ e }}</div>{% endfor %}
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">City</label>{{ form.city }}
+              {% for e in form.city.errors %}<div class="text-danger small">{{ e }}</div>{% endfor %}
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Postal code</label>{{ form.postal_code }}
+              {% for e in form.postal_code.errors %}<div class="text-danger small">{{ e }}</div>{% endfor %}
+            </div>
+          </div>
+        </div>
+
+        <div class="stat-card p-4 mb-4">
+          <h5 class="mb-3"><i class="bi bi-credit-card me-2"></i>Payment</h5>
+          {% for radio in form.payment_method %}
+            <div class="form-check mb-2">
+              {{ radio.tag }}
+              <label class="form-check-label" for="{{ radio.id_for_label }}">{{ radio.choice_label }}</label>
+            </div>
+          {% endfor %}
+          <p class="small text-muted mb-0">This demo store doesn't process real payments.</p>
+        </div>
+
+        <button class="btn btn-accent btn-lg w-100">Place order — ${{ cart.total|intcomma }}</button>
+      </form>
+    </div>
+
+    <div class="col-lg-5">
+      <div class="stat-card p-4">
+        <h5 class="mb-3">Your items</h5>
+        {% for item in cart %}
+          <div class="d-flex justify-content-between py-2 border-bottom">
+            <span class="text-truncate me-3">{{ item.quantity }} × {{ item.product.name }}</span>
+            <span class="fw-semibold">${{ item.subtotal|intcomma }}</span>
+          </div>
+        {% endfor %}
+        <div class="d-flex justify-content-between fs-5 fw-bold pt-3"><span>Total</span><span class="price">${{ cart.total|intcomma }}</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

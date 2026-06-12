@@ -1,0 +1,23 @@
+{% extends "dashboard/base_dash.html" %}
+{% block title %}Customers{% endblock %}
+{% block dash %}
+<h1 class="section-title fs-3 mb-4">Customers</h1>
+<div class="stat-card p-3">
+  <div class="table-responsive">
+    <table class="table align-middle">
+      <thead><tr><th>Username</th><th>Email</th><th>Joined</th><th>Orders</th><th>Active</th></tr></thead>
+      <tbody>
+        {% for u in page %}
+          <tr>
+            <td class="fw-semibold"><i class="bi bi-person-circle me-2 text-muted"></i>{{ u.username }}</td>
+            <td>{{ u.email|default:"—" }}</td>
+            <td class="text-muted">{{ u.date_joined|date:"M j, Y" }}</td>
+            <td>{{ u.order_count }}</td>
+            <td>{% if u.is_active %}<span class="badge text-bg-success">Active</span>{% else %}<span class="badge text-bg-secondary">Disabled</span>{% endif %}</td>
+          </tr>
+        {% empty %}<tr><td colspan="5" class="text-muted">No customers yet.</td></tr>{% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

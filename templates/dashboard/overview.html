@@ -1,0 +1,85 @@
+{% extends "dashboard/base_dash.html" %}
+{% load humanize %}
+{% block title %}Dashboard{% endblock %}
+{% block dash %}
+<h1 class="section-title fs-3 mb-4">Overview</h1>
+
+<div class="row g-3 mb-4">
+  <div class="col-6 col-xl-3">
+    <div class="stat-card p-3 d-flex align-items-center gap-3">
+      <div class="icon"><i class="bi bi-cash-stack"></i></div>
+      <div><div class="text-muted small">Revenue (all time)</div><div class="value">${{ stats.revenue|floatformat:2|intcomma }}</div></div>
+    </div>
+  </div>
+  <div class="col-6 col-xl-3">
+    <div class="stat-card p-3 d-flex align-items-center gap-3">
+      <div class="icon"><i class="bi bi-graph-up-arrow"></i></div>
+      <div><div class="text-muted small">Revenue (30 days)</div><div class="value">${{ stats.revenue_30d|floatformat:2|intcomma }}</div></div>
+    </div>
+  </div>
+  <div class="col-6 col-xl-3">
+    <div class="stat-card p-3 d-flex align-items-center gap-3">
+      <div class="icon"><i class="bi bi-receipt"></i></div>
+      <div><div class="text-muted small">Orders <span class="text-warning">({{ stats.pending_orders }} pending)</span></div><div class="value">{{ stats.orders|intcomma }}</div></div>
+    </div>
+  </div>
+  <div class="col-6 col-xl-3">
+    <div class="stat-card p-3 d-flex align-items-center gap-3">
+      <div class="icon"><i class="bi bi-people"></i></div>
+      <div><div class="text-muted small">Customers</div><div class="value">{{ stats.customers|intcomma }}</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-4">
+  <div class="col-xl-7">
+    <div class="stat-card p-4 h-100">
+      <div class="d-flex justify-content-between mb-3">
+        <h5 class="mb-0">Recent orders</h5>
+        <a href="{% url 'dashboard:orders' %}" class="small">View all</a>
+      </div>
+      <div class="table-responsive">
+        <table class="table table-sm align-middle">
+          <thead><tr><th>#</th><th>Customer</th><th>Total</th><th>Status</th><th>Placed</th></tr></thead>
+          <tbody>
+            {% for order in recent_orders %}
+              <tr>
+                <td>{{ order.pk }}</td>
+                <td>{{ order.full_name }}</td>
+                <td>${{ order.total|intcomma }}</td>
+                <td><span class="badge status-badge text-bg-{% if order.status == 'delivered' %}success{% elif order.status == 'cancelled' %}secondary{% elif order.status == 'shipped' %}info{% else %}warning{% endif %}">{{ order.get_status_display }}</span></td>
+                <td class="text-muted">{{ order.created|naturaltime }}</td>
+              </tr>
+            {% empty %}
+              <tr><td colspan="5" class="text-muted">No orders yet.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="col-xl-5">
+    <div class="stat-card p-4 mb-4">
+      <h5 class="mb-3">Best sellers</h5>
+      {% for p in top_products %}
+        <div class="d-flex justify-content-between py-1 border-bottom small">
+          <span class="text-truncate me-2">{{ p.product_name }}</span>
+          <span class="text-muted">{{ p.sold }} sold · ${{ p.revenue|intcomma }}</span>
+        </div>
+      {% empty %}<p class="text-muted mb-0">Sales data will appear here.</p>{% endfor %}
+    </div>
+    <div class="stat-card p-4">
+      <div class="d-flex justify-content-between mb-2">
+        <h5 class="mb-0">Low stock</h5>
+        <a href="{% url 'dashboard:inventory' %}" class="small">Inventory</a>
+      </div>
+      {% for p in low_stock %}
+        <div class="d-flex justify-content-between py-1 border-bottom small">
+          <a class="text-decoration-none text-reset text-truncate me-2" href="{% url 'dashboard:product_edit' p.pk %}">{{ p.name }}</a>
+          <span class="badge text-bg-{% if p.stock == 0 %}danger{% else %}warning{% endif %}">{{ p.stock }} left</span>
+        </div>
+      {% empty %}<p class="text-muted mb-0">All products are well stocked.</p>{% endfor %}
+    </div>
+  </div>
+</div>
+{% endblock %}

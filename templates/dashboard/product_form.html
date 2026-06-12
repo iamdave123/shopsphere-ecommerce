@@ -1,0 +1,31 @@
+{% extends "dashboard/base_dash.html" %}
+{% block title %}{% if product %}Edit product{% else %}New product{% endif %}{% endblock %}
+{% block dash %}
+<h1 class="section-title fs-3 mb-4">{% if product %}Edit “{{ product.name }}”{% else %}Add product{% endif %}</h1>
+<div class="stat-card p-4" style="max-width: 760px;">
+  <form method="post" enctype="multipart/form-data" novalidate>
+    {% csrf_token %}
+    {% if form.non_field_errors %}<div class="alert alert-danger">{{ form.non_field_errors }}</div>{% endif %}
+    <div class="row g-3">
+      <div class="col-md-8"><label class="form-label">Name</label>{{ form.name }}{% for e in form.name.errors %}<div class="text-danger small">{{ e }}</div>{% endfor %}</div>
+      <div class="col-md-4"><label class="form-label">Category</label>{{ form.category }}{% for e in form.category.errors %}<div class="text-danger small">{{ e }}</div>{% endfor %}</div>
+      <div class="col-12"><label class="form-label">Description</label>{{ form.description }}{% for e in form.description.errors %}<div class="text-danger small">{{ e }}</div>{% endfor %}</div>
+      <div class="col-md-4"><label class="form-label">Price ($)</label>{{ form.price }}{% for e in form.price.errors %}<div class="text-danger small">{{ e }}</div>{% endfor %}</div>
+      <div class="col-md-4"><label class="form-label">Compare-at price</label>{{ form.compare_at_price }}<div class="form-text">Optional — shows a sale badge.</div></div>
+      <div class="col-md-4"><label class="form-label">Stock</label>{{ form.stock }}{% for e in form.stock.errors %}<div class="text-danger small">{{ e }}</div>{% endfor %}</div>
+      <div class="col-md-6">
+        <label class="form-label">Image</label>{{ form.image }}
+        {% if product.image %}<div class="form-text">Current: {{ product.image.name }}</div>{% endif %}
+      </div>
+      <div class="col-md-6 d-flex align-items-end gap-4 pb-1">
+        <div class="form-check">{{ form.is_active }}<label class="form-check-label" for="{{ form.is_active.id_for_label }}">Visible in store</label></div>
+        <div class="form-check">{{ form.featured }}<label class="form-check-label" for="{{ form.featured.id_for_label }}">Featured</label></div>
+      </div>
+    </div>
+    <div class="mt-4 d-flex gap-2">
+      <button class="btn btn-accent">Save product</button>
+      <a href="{% url 'dashboard:products' %}" class="btn btn-outline-secondary">Cancel</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,54 @@
+{% extends "dashboard/base_dash.html" %}
+{% load humanize %}
+{% block title %}Products{% endblock %}
+{% block dash %}
+<div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
+  <h1 class="section-title fs-3 mb-0">Products</h1>
+  <div class="d-flex gap-2">
+    <form method="get" class="d-flex"><input class="form-control form-control-sm" name="q" value="{{ q }}" placeholder="Search products…"></form>
+    <a href="{% url 'dashboard:product_new' %}" class="btn btn-accent btn-sm"><i class="bi bi-plus-lg me-1"></i>Add product</a>
+  </div>
+</div>
+
+<div class="stat-card p-3">
+  <div class="table-responsive">
+    <table class="table align-middle">
+      <thead><tr><th>Product</th><th>Category</th><th>Price</th><th>Stock</th><th>Visible</th><th class="text-end">Actions</th></tr></thead>
+      <tbody>
+        {% for p in page %}
+          <tr>
+            <td>
+              <div class="d-flex align-items-center gap-2">
+                {% if p.image %}<img class="thumb" src="{{ p.image.url }}" alt="">{% else %}<div class="thumb-fallback"><i class="bi bi-box-seam"></i></div>{% endif %}
+                <div>
+                  <div class="fw-semibold">{{ p.name }}</div>
+                  {% if p.featured %}<span class="badge text-bg-info">Featured</span>{% endif %}
+                </div>
+              </div>
+            </td>
+            <td>{{ p.category.name }}</td>
+            <td>${{ p.price|intcomma }}{% if p.on_sale %} <s class="text-muted small">${{ p.compare_at_price }}</s>{% endif %}</td>
+            <td><span class="badge text-bg-{% if p.stock == 0 %}danger{% elif p.low_stock %}warning{% else %}success{% endif %}">{{ p.stock }}</span></td>
+            <td>{% if p.is_active %}<i class="bi bi-eye text-success"></i>{% else %}<i class="bi bi-eye-slash text-muted"></i>{% endif %}</td>
+            <td class="text-end">
+              <a href="{% url 'dashboard:product_edit' p.pk %}" class="btn btn-sm btn-outline-teal"><i class="bi bi-pencil"></i></a>
+              <form method="post" action="{% url 'dashboard:product_delete' p.pk %}" class="d-inline" onsubmit="return confirm('Delete “{{ p.name }}”? This can\'t be undone.');">
+                {% csrf_token %}<button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+              </form>
+            </td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="6" class="text-muted">No products found.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% if page.has_other_pages %}
+    <nav><ul class="pagination pagination-sm justify-content-center mb-0">
+      {% for n in page.paginator.page_range %}
+        <li class="page-item {% if n == page.number %}active{% endif %}"><a class="page-link" href="?page={{ n }}&q={{ q }}">{{ n }}</a></li>
+      {% endfor %}
+    </ul></nav>
+  {% endif %}
+</div>
+{% endblock %}

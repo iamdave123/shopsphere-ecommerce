@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% load humanize %}
+{% block title %}Order #{{ order.pk }}{% endblock %}
+{% block content %}
+<div class="container py-5" style="max-width: 860px;">
+  <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+    <h1 class="section-title mb-0">Order #{{ order.pk }}</h1>
+    <span class="badge fs-6 status-badge text-bg-{% if order.status == 'delivered' %}success{% elif order.status == 'cancelled' %}secondary{% elif order.status == 'shipped' %}info{% else %}warning{% endif %}">{{ order.get_status_display }}</span>
+  </div>
+  <p class="text-muted">Placed {{ order.created|date:"F j, Y, g:i a" }} · {{ order.payment_method }}</p>
+
+  {% if order.progress_steps %}
+    <div class="timeline">
+      {% for step in order.progress_steps %}
+        <div class="step {% if step.done %}done{% endif %} {% if step.current %}current{% endif %}">
+          <div class="dot">{% if step.done %}<i class="bi bi-check"></i>{% else %}{{ forloop.counter }}{% endif %}</div>
+          <div class="label">{{ step.label }}</div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="alert alert-secondary">This order was cancelled.</div>
+  {% endif %}
+
+  <div class="row g-4 mt-1">
+    <div class="col-md-7">
+      <div class="stat-card p-4 h-100">
+        <h5 class="mb-3">Items</h5>
+        {% for item in order.items.all %}
+          <div class="d-flex justify-content-between py-2 border-bottom">
+            <div>
+              {% if item.product %}<a href="{{ item.product.get_absolute_url }}" class="text-decoration-none text-reset fw-semibold">{{ item.product_name }}</a>
+              {% else %}<span class="fw-semibold">{{ item.product_name }}</span>{% endif %}
+              <div class="small text-muted">${{ item.price|intcomma }} × {{ item.quantity }}</div>
+            </div>
+            <span class="fw-semibold">${{ item.subtotal|intcomma }}</span>
+          </div>
+        {% endfor %}
+        <div class="d-flex justify-content-between fw-bold fs-5 pt-3"><span>Total</span><span class="price">${{ order.total|intcomma }}</span></div>
+      </div>
+    </div>
+    <div class="col-md-5">
+      <div class="stat-card p-4 h-100">
+        <h5 class="mb-3">Shipping to</h5>
+        <p class="mb-1 fw-semibold">{{ order.full_name }}</p>
+        <p class="mb-1">{{ order.address }}</p>
+        <p class="mb-1">{{ order.city }}, {{ order.postal_code }}</p>
+        <p class="mb-1 text-muted">{{ order.email }}</p>
+        {% if order.phone %}<p class="mb-0 text-muted">{{ order.phone }}</p>{% endif %}
+      </div>
+    </div>
+  </div>
+
+  <a href="{% url 'store:my_orders' %}" class="btn btn-outline-teal mt-4"><i class="bi bi-arrow-left me-1"></i>Back to my orders</a>
+</div>
+{% endblock %}
