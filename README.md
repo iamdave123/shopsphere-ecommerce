@@ -23,7 +23,7 @@ python manage.py runserver
 
 Open http://127.0.0.1:8000 for the store, http://127.0.0.1:8000/dashboard/ for the staff dashboard (staff login required), and http://127.0.0.1:8000/admin/ for the Django admin.
 
-Demo customer logins (after seeding): `amelia`, `jordan`, `priya` — password `demo12345`.
+D
 
 ## Features
 
